@@ -3,11 +3,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
+import vertexTubes from "./shaderTubes/vertex.glsl";
+import fragmentTubes from "./shaderTubes/fragment.glsl";
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+const scene1 = new THREE.Scene();
 
 // CURL NOISE FUNC
 
@@ -57,12 +60,12 @@ function computeCurl(x, y, z) {
 
 //Curve generator
 const getCurve = (start) => {
-  let scale = 2;
+  let scale = 1;
   let points = [];
   points.push(start);
 
   let currentPoint = start.clone();
-  for (let i = 0; i < 400; i++) {
+  for (let i = 0; i < 600; i++) {
     // console.log(currentPoint)
     let v = computeCurl(
       currentPoint.x / scale,
@@ -85,7 +88,17 @@ const material = new THREE.ShaderMaterial({
   },
   vertexShader: vertex,
   fragmentShader: fragment,
-
+  // transparent: true,
+  side: THREE.DoubleSide,
+});
+const materialTubes = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0.0 },
+    uLight: { value: new THREE.Vector3(0,0,0)}
+  },
+  vertexShader: vertexTubes,
+  fragmentShader: fragmentTubes,
+  // transparent: true,
   side: THREE.DoubleSide,
 });
 const generateTubes = () => {
@@ -100,14 +113,14 @@ const generateTubes = () => {
     path = new THREE.CatmullRomCurve3(
       getCurve(
         new THREE.Vector3(
-          Math.random() - 0.5,
+          (Math.random() - 0.5)*2,
           Math.random() - 0.5,
           Math.random() - 0.5
         )
       )
     );
     geometry = new THREE.TubeBufferGeometry(path, 100, 0.005, 8, false);
-    mesh = new THREE.Mesh(geometry, material);
+    mesh = new THREE.Mesh(geometry, materialTubes);
     scene.add(mesh);
     objects.push(mesh);
   }
@@ -128,11 +141,11 @@ const raycast = () => {
     material
   );
   let light = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(0.03, 20, 20),
+    new THREE.SphereBufferGeometry(0.01, 20, 20),
     new THREE.MeshBasicMaterial({ color: 0xe38a93 })
   );
-  scene.add(raycastPlane, light);
-
+  scene.add(light);
+  scene1.add(raycastPlane);
   const raycaster = new THREE.Raycaster();
 
   window.addEventListener("mousemove", onMouseMove);
@@ -174,7 +187,7 @@ window.addEventListener("resize", () => {
 /**
  * Camera
  */
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
 camera.position.z = 1;
 scene.add(camera);
 
@@ -194,7 +207,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 renderer.setClearColor(new THREE.Color("black"));
-
+renderer.autoClear = false;
 /**
  *  Main
  */
@@ -230,10 +243,17 @@ const animate = () => {
 
   material.uniforms.uLight.value = light.position
   material.uniforms.uTime.value = elapseTime;
+  materialTubes.uniforms.uLight.value = light.position
+  materialTubes.uniforms.uTime.value = elapseTime;
   // renderer
-  renderer.render(scene, camera);
-
+  
   window.requestAnimationFrame(animate);
+  renderer.clear();
+  renderer.render(scene1, camera);
+  renderer.clearDepth();
+  renderer.render(scene,camera)
+
+  
 };
 
 animate();
