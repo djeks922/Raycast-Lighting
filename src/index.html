@@ -4,8 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>04 - Webpack</title>
+    <style>
+        .cursor{
+            position: absolute;
+            left: 0;
+            right: 0;
+            background-color: blue;
+            width: 20px;
+            height: 20px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
+    <div class="cursor"></div>
     <canvas class="webgl"></canvas>
 </body>
 </html>

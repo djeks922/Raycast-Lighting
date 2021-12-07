@@ -1,8 +1,8 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import vertex from './shaders/vertex.glsl'
-import fragment from './shaders/fragment.glsl'
+import vertex from "./shaders/vertex.glsl";
+import fragment from "./shaders/fragment.glsl";
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
@@ -57,14 +57,18 @@ function computeCurl(x, y, z) {
 
 //Curve generator
 const getCurve = (start) => {
-  let scale= 2
+  let scale = 2;
   let points = [];
   points.push(start);
 
   let currentPoint = start.clone();
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 400; i++) {
     // console.log(currentPoint)
-    let v = computeCurl(currentPoint.x/scale, currentPoint.y/scale, currentPoint.z/scale);
+    let v = computeCurl(
+      currentPoint.x / scale,
+      currentPoint.y / scale,
+      currentPoint.z / scale
+    );
     currentPoint.addScaledVector(v, 0.001);
     // console.log(currentPoint.clone(),v)
 
@@ -74,23 +78,25 @@ const getCurve = (start) => {
   return points;
 };
 // TUBE generator
+const material = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0.0 },
+    uLight: { value: new THREE.Vector3(0,0,0)}
+  },
+  vertexShader: vertex,
+  fragmentShader: fragment,
+
+  side: THREE.DoubleSide,
+});
 const generateTubes = () => {
-  let path = null
-  let geometry =null
+  let path = null;
+  let geometry = null;
   // const geometry2 = new THREE.PlaneBufferGeometry(1,1)
-  let material = new THREE.ShaderMaterial({
-    uniforms: {
-      uTime: {value : 0.0}
-    },
-    vertexShader: vertex,
-    fragmentShader: fragment, 
 
-    side: THREE.DoubleSide,
-  });
-  let mesh =null
-  const objects = []
+  let mesh = null;
+  const objects = [];
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 150; i++) {
     path = new THREE.CatmullRomCurve3(
       getCurve(
         new THREE.Vector3(
@@ -103,47 +109,48 @@ const generateTubes = () => {
     geometry = new THREE.TubeBufferGeometry(path, 100, 0.005, 8, false);
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
-    objects.push(mesh)
+    objects.push(mesh);
   }
-
-}
-
+};
 
 // Raycast Func
+
+const mouse = new THREE.Vector2();
+const emouse = new THREE.Vector2();
+const elasticMouse = new THREE.Vector2(0, 0);
+const elasticMouseVel = new THREE.Vector2(0, 0);
+const temp = new THREE.Vector2();
+const cursor = document.querySelector(".cursor");
+
 const raycast = () => {
-    
-    let raycastPlane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(10,10),
-      new THREE.MeshBasicMaterial({color: 0xff0000})
-    )
-    let light= new THREE.Mesh(
-      new THREE.SphereBufferGeometry(0.1,20,20),
-      new THREE.MeshBasicMaterial({color: 0x00ff00})
-    )
-    scene.add(raycastPlane,light);
+  let raycastPlane = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(10, 10),
+    material
+  );
+  let light = new THREE.Mesh(
+    new THREE.SphereBufferGeometry(0.03, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0xe38a93 })
+  );
+  scene.add(raycastPlane, light);
+
+  const raycaster = new THREE.Raycaster();
+
+  window.addEventListener("mousemove", onMouseMove);
+  function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
 
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    window.addEventListener('mousemove', onMouseMove)
-    function onMouseMove(event ) {
-      
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-      mouse.y = -(event.clientY/ window.innerHeight)* 2 - 1
-
-      raycaster.setFromCamera(mouse,camera)
-  
-      const intersects = raycaster.intersectObjects([raycastPlane])
-      if(intersects.length > 0){
-        let p  = intersects[0].point
-        // console.log(p)
-      } 
-
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects([raycastPlane]);
+    if (intersects.length > 0) {
+      let p = intersects[0].point;
+      emouse.x = p.x
+      emouse.y = p.y
     }
-}
-
-
+  }
+  return light;
+};
 
 /**
  * Sizes
@@ -177,7 +184,7 @@ scene.add(camera);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.update()
+controls.update();
 /**
  * Renderer
  */
@@ -188,21 +195,44 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 renderer.setClearColor(new THREE.Color("black"));
 
-
 /**
  *  Main
  */
 
- generateTubes();
- raycast();
+generateTubes();
+const light = raycast();
 
 /**
  *  Animation
- */ 
-
+ */
+const clock = new THREE.Clock();
 const animate = () => {
-  renderer.render(scene, camera);
+  // Time
+
+  let elapseTime = clock.getElapsedTime();
+  
+  // Controls update
   controls.update();
+
+  /**
+   *  cursor/light animation
+   */
+
+  cursor.style.transform = `translate(${elasticMouse.x}px,${elasticMouse.y}px)`;
+
+  temp.copy(emouse).sub(elasticMouse).multiplyScalar(0.15);
+  elasticMouseVel.add(temp);
+  elasticMouseVel.multiplyScalar(0.8);
+  elasticMouse.add(elasticMouseVel);
+
+  light.position.x = elasticMouse.x
+  light.position.y = elasticMouse.y
+
+  material.uniforms.uLight.value = light.position
+  material.uniforms.uTime.value = elapseTime;
+  // renderer
+  renderer.render(scene, camera);
+
   window.requestAnimationFrame(animate);
 };
 
