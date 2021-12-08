@@ -60,12 +60,12 @@ function computeCurl(x, y, z) {
 
 //Curve generator
 const getCurve = (start) => {
-  let scale = 1;
+  let scale = 2;
   let points = [];
   points.push(start);
 
   let currentPoint = start.clone();
-  for (let i = 0; i < 600; i++) {
+  for (let i = 0; i < 400; i++) {
     // console.log(currentPoint)
     let v = computeCurl(
       currentPoint.x / scale,
@@ -113,9 +113,9 @@ const generateTubes = () => {
     path = new THREE.CatmullRomCurve3(
       getCurve(
         new THREE.Vector3(
-          (Math.random() - 0.5)*2,
-          Math.random() - 0.5,
-          Math.random() - 0.5
+          (Math.random()-0.5)*2,
+          (Math.random()-0.5)*2,
+          (Math.random()-0.5)*3
         )
       )
     );
@@ -124,6 +124,7 @@ const generateTubes = () => {
     scene.add(mesh);
     objects.push(mesh);
   }
+  return objects;
 };
 
 // Raycast Func
@@ -134,30 +135,40 @@ const elasticMouse = new THREE.Vector2(0, 0, 0);
 const elasticMouseVel = new THREE.Vector2(0, 0, 0);
 const temp = new THREE.Vector3();
 
-const raycast = () => {
+const raycast = (objects) => {
   let raycastPlane = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10, 10),
     material
   );
+  raycastPlane.position.set(0,0,-1)
   let raycastPlane1 = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10, 10),
     material
   );
-  raycastPlane1.position.set(-5,0,0)
+  raycastPlane1.position.set(-1,0,0)
   raycastPlane1.rotation.set(0,Math.PI*0.5,0)
   
   let raycastPlane2 = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10, 10),
     material
   );
-  raycastPlane2.position.set(5,0,0)
-  raycastPlane1.rotation.set(0,Math.PI*0.5,0)
+  raycastPlane2.position.set(1,0,0)
+  raycastPlane2.rotation.set(0,Math.PI*0.5,0)
+  let raycastPlane3 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(10, 10),
+    material
+  );
+  raycastPlane3.position.set(0,0,1)
+  
+ 
+
+  // Light
   let light = new THREE.Mesh(
     new THREE.SphereBufferGeometry(0.007, 20, 20),
     new THREE.MeshBasicMaterial({ color: 0xe38a93 })
   );
   scene.add(light);
-  scene1.add(raycastPlane,raycastPlane1,raycastPlane2);
+  scene1.add(raycastPlane,raycastPlane1,raycastPlane2,raycastPlane3);
   const raycaster = new THREE.Raycaster();
 
   window.addEventListener("mousemove", onMouseMove);
@@ -167,13 +178,13 @@ const raycast = () => {
 
 
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects([raycastPlane,raycastPlane1,raycastPlane2]);
+    const intersects = raycaster.intersectObjects([raycastPlane,raycastPlane1,raycastPlane2,raycastPlane3]);
     if (intersects.length > 0) {
       let p = intersects[0].point;
       emouse.x = p.x
       emouse.y = p.y
       emouse.z = p.z
-      console.log(p)
+      // console.log(intersects)
     }
   }
   return light;
@@ -220,14 +231,14 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
-renderer.setClearColor(new THREE.Color("#290929"));
+renderer.setClearColor(new THREE.Color("rgb(34,5,36)"));
 renderer.autoClear = false;
 /**
  *  Main
  */
 
-generateTubes();
-const light = raycast();
+const objects = generateTubes();
+const light = raycast(objects);
 
 /**
  *  Animation
@@ -263,12 +274,12 @@ const animate = () => {
 
   // camera
   
-  // camera.rotation.x = +mouse.y
-  // camera.rotation.y = -mouse.x
+  // camera.rotation.y += -mouse.x
+  // camera.rotation.x += +mouse.y
 
-  // camera.position.x = Math.cos(elapseTime * 0.4)*0.5;
-  // camera.position.y = Math.sin(elapseTime)*0.3; 
-  // camera.position.z = (Math.sin(elapseTime*0.4)+1)*0.1; 
+  camera.position.x = Math.cos(elapseTime * 0.3);
+  camera.position.y = Math.sin(elapseTime *.25)*0.5; 
+  camera.position.z = (Math.sin(elapseTime*0.3)); 
   // camera.lookAt(light.position)
   // console.log(camera.position.x)
 

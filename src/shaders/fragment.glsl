@@ -18,10 +18,11 @@ float getScatter(vec3 cameraPos, vec3 dir, vec3 lightPos, float d) {
     float s = 1.0/ sqrt(max(0.0001,t));
     float l = s * (atan( (d+b)*s) - atan(b*s));
 
-    return pow(max(0.0,l/10.),0.4);
+    return pow(max(0.0,l/250.),0.9);
 }
 void main () {
-
+    // float freq1 = tan(vUv.x*300. + uTime*2);
+    // if(freq1 < 0. ) discard;
     vec3 cameraToWorld = vWorldPosition - cameraPosition;
     vec3 cameraToWorldDir = normalize(cameraToWorld);
     float cameraToWorldDistance = length(cameraToWorld);
@@ -32,7 +33,7 @@ void main () {
 
     float scatter = getScatter(cameraPosition,cameraToWorldDir,uLight,cameraToWorldDistance);
 
-    gl_FragColor= vec4 (scatter*(56./255.),(12./255.),(56./255.),1.0);
+    gl_FragColor= vec4 (scatter*(200./255.)+(34./255.),(5./255.),(36./255.),1.0);
 
 
 }
