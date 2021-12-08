@@ -129,23 +129,35 @@ const generateTubes = () => {
 // Raycast Func
 
 const mouse = new THREE.Vector2();
-const emouse = new THREE.Vector2();
-const elasticMouse = new THREE.Vector2(0, 0);
-const elasticMouseVel = new THREE.Vector2(0, 0);
-const temp = new THREE.Vector2();
-const cursor = document.querySelector(".cursor");
+const emouse = new THREE.Vector3();
+const elasticMouse = new THREE.Vector2(0, 0, 0);
+const elasticMouseVel = new THREE.Vector2(0, 0, 0);
+const temp = new THREE.Vector3();
 
 const raycast = () => {
   let raycastPlane = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10, 10),
     material
   );
+  let raycastPlane1 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(10, 10),
+    material
+  );
+  raycastPlane1.position.set(-5,0,0)
+  raycastPlane1.rotation.set(0,Math.PI*0.5,0)
+  
+  let raycastPlane2 = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(10, 10),
+    material
+  );
+  raycastPlane2.position.set(5,0,0)
+  raycastPlane1.rotation.set(0,Math.PI*0.5,0)
   let light = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(0.01, 20, 20),
+    new THREE.SphereBufferGeometry(0.007, 20, 20),
     new THREE.MeshBasicMaterial({ color: 0xe38a93 })
   );
   scene.add(light);
-  scene1.add(raycastPlane);
+  scene1.add(raycastPlane,raycastPlane1,raycastPlane2);
   const raycaster = new THREE.Raycaster();
 
   window.addEventListener("mousemove", onMouseMove);
@@ -155,11 +167,13 @@ const raycast = () => {
 
 
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects([raycastPlane]);
+    const intersects = raycaster.intersectObjects([raycastPlane,raycastPlane1,raycastPlane2]);
     if (intersects.length > 0) {
       let p = intersects[0].point;
       emouse.x = p.x
       emouse.y = p.y
+      emouse.z = p.z
+      console.log(p)
     }
   }
   return light;
@@ -188,7 +202,7 @@ window.addEventListener("resize", () => {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
-camera.position.z = 1;
+camera.position.z = 2;
 scene.add(camera);
 
 /**
@@ -206,7 +220,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
-renderer.setClearColor(new THREE.Color("black"));
+renderer.setClearColor(new THREE.Color("#290929"));
 renderer.autoClear = false;
 /**
  *  Main
@@ -223,7 +237,6 @@ const animate = () => {
   // Time
 
   let elapseTime = clock.getElapsedTime();
-  
   // Controls update
   controls.update();
 
@@ -231,7 +244,7 @@ const animate = () => {
    *  cursor/light animation
    */
 
-  cursor.style.transform = `translate(${elasticMouse.x}px,${elasticMouse.y}px)`;
+  // cursor.style.transform = `translate(${elasticMouse.x}px,${elasticMouse.y}px)`;
 
   temp.copy(emouse).sub(elasticMouse).multiplyScalar(0.15);
   elasticMouseVel.add(temp);
@@ -240,20 +253,36 @@ const animate = () => {
 
   light.position.x = elasticMouse.x
   light.position.y = elasticMouse.y
+  light.position.z = emouse.z
 
   material.uniforms.uLight.value = light.position
   material.uniforms.uTime.value = elapseTime;
   materialTubes.uniforms.uLight.value = light.position
   materialTubes.uniforms.uTime.value = elapseTime;
-  // renderer
   
-  window.requestAnimationFrame(animate);
+
+  // camera
+  
+  // camera.rotation.x = +mouse.y
+  // camera.rotation.y = -mouse.x
+
+  // camera.position.x = Math.cos(elapseTime * 0.4)*0.5;
+  // camera.position.y = Math.sin(elapseTime)*0.3; 
+  // camera.position.z = (Math.sin(elapseTime*0.4)+1)*0.1; 
+  // camera.lookAt(light.position)
+  // console.log(camera.position.x)
+
+ 
+
+  // renderer
   renderer.clear();
   renderer.render(scene1, camera);
   renderer.clearDepth();
   renderer.render(scene,camera)
 
-  
+  // recall animationFunc
+
+  window.requestAnimationFrame(animate);
 };
 
 animate();
