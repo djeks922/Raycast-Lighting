@@ -23,7 +23,7 @@ float getScatter(vec3 cameraPos, vec3 dir, vec3 lightPos, float d) {
     return pow(max(0.0,l/uIntensity.y),uIntensity.x);
 }
 void main () {
-    if(cos(vUv.x*5.*uTime) < sin(uTime*0.3)*cos(uTime*0.3)) discard;
+    if(cos(vUv.x*5.*sin(uTime/20.)*10. -uTime) < 0.99) discard;
  
 
 
