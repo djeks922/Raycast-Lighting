@@ -1,16 +1,53 @@
 import "./style.css";
 import * as THREE from "three";
+import dat from 'dat.gui';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
 import vertexTubes from "./shaderTubes/vertex.glsl";
 import fragmentTubes from "./shaderTubes/fragment.glsl";
+
+
+
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
 const scene1 = new THREE.Scene();
+
+// Dat Gui
+
+const gui = new dat.GUI();
+
+
+// Parameters for gui
+
+const parameters = {};
+parameters.rTubes = 255;
+parameters.gTubes = 255;
+parameters.bTubes = 255;
+
+parameters.rPlane = 255;
+parameters.gPlane = 255;
+parameters.bPlane = 255;
+
+parameters.powerT = 0.91;
+parameters.antiDiffusionT = 6;
+parameters.powerP = 0.61;
+parameters.antiDiffusionP = 59;
+const Tubes = gui.addFolder('Tubes')
+Tubes.add(parameters,'rTubes',0,255,1);
+Tubes.add(parameters,'gTubes',0,255,1);
+Tubes.add(parameters,'bTubes',0,255,1);
+Tubes.add(parameters,'powerT',0,1,0.01);
+Tubes.add(parameters,'antiDiffusionT',0,150,1);
+const Plane = gui.addFolder('Plane')
+Plane.add(parameters,'rPlane',0,255,1);
+Plane.add(parameters,'gPlane',0,255,1);
+Plane.add(parameters,'bPlane',0,255,1);
+Plane.add(parameters,'powerP',0,1,0.01);
+Plane.add(parameters,'antiDiffusionP',0,150,1);
 
 // CURL NOISE FUNC
 
@@ -84,7 +121,9 @@ const getCurve = (start) => {
 const material = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0.0 },
-    uLight: { value: new THREE.Vector3(0,0,0)}
+    uLight: { value: new THREE.Vector3(0,0,0)},
+    uColor: {value : new THREE.Vector3(0,0,0)},
+    uIntensity: {value: new THREE.Vector2(0,0)}
   },
   vertexShader: vertex,
   fragmentShader: fragment,
@@ -94,7 +133,9 @@ const material = new THREE.ShaderMaterial({
 const materialTubes = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0.0 },
-    uLight: { value: new THREE.Vector3(0,0,0)}
+    uLight: { value: new THREE.Vector3(0,0,0)},
+    uColor: {value : new THREE.Vector3(0.,0.,0.)},
+    uIntensity: {value: new THREE.Vector2(0,0)}
   },
   vertexShader: vertexTubes,
   fragmentShader: fragmentTubes,
@@ -177,7 +218,7 @@ const raycast = (objects) => {
   // Light
   let light = new THREE.Mesh(
     new THREE.SphereBufferGeometry(0.007, 20, 20),
-    new THREE.MeshBasicMaterial({ color: 0xe38a93 })
+    new THREE.MeshBasicMaterial({ color: 0xffffff })
   );
   scene.add(light);
   scene1.add(raycastPlane,raycastPlane1,raycastPlane2,raycastPlane3,raycastPlane4,raycastPlane5);
@@ -280,8 +321,13 @@ const animate = () => {
 
   material.uniforms.uLight.value = light.position
   material.uniforms.uTime.value = elapseTime;
+  material.uniforms.uColor.value = [parameters.rPlane,parameters.gPlane,parameters.bPlane];
+  material.uniforms.uIntensity.value = [parameters.powerP,parameters.antiDiffusionP];
+
   materialTubes.uniforms.uLight.value = light.position
   materialTubes.uniforms.uTime.value = elapseTime;
+  materialTubes.uniforms.uColor.value = [parameters.rTubes,parameters.gTubes,parameters.bTubes];
+  materialTubes.uniforms.uIntensity.value = [parameters.powerT,parameters.antiDiffusionT];
   
 
   // camera
