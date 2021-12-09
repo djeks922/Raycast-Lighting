@@ -24,9 +24,9 @@ const gui = new dat.GUI();
 // Parameters for gui
 
 const parameters = {};
-parameters.rTubes = 255;
-parameters.gTubes = 255;
-parameters.bTubes = 255;
+parameters.rTubes = 193;
+parameters.gTubes = 41;
+parameters.bTubes = 46;
 
 parameters.rPlane = 255;
 parameters.gPlane = 255;
@@ -284,7 +284,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
-renderer.setClearColor(new THREE.Color("rgb(10,0,10)"));
+renderer.setClearColor(new THREE.Color("rgb(0,0,20)"));
 renderer.autoClear = false;
 /**
  *  Main
