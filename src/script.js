@@ -113,9 +113,9 @@ const generateTubes = () => {
     path = new THREE.CatmullRomCurve3(
       getCurve(
         new THREE.Vector3(
-          (Math.random()-0.5)*2,
-          (Math.random()-0.5)*2,
-          (Math.random()-0.5)*2
+          (Math.random()-0.5)*3,
+          (Math.random()-0.5)*3,
+          (Math.random()-0.5)*3
         )
       )
     );
@@ -225,7 +225,7 @@ window.addEventListener("resize", () => {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
-camera.position.y = 7;
+camera.position.z = 3;
 scene.add(camera);
 
 /**
