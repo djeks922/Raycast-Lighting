@@ -7,7 +7,7 @@ varying vec2 vUv;
 varying vec3 vPosition;
 varying vec3 vNormal;
 varying vec3 vWorldPosition;
-
+float PI = 3.14159265359;
 float getScatter(vec3 cameraPos, vec3 dir, vec3 lightPos, float d) {
 
     vec3 q = cameraPos - lightPos;
@@ -23,7 +23,9 @@ float getScatter(vec3 cameraPos, vec3 dir, vec3 lightPos, float d) {
     return pow(max(0.0,l/uIntensity.y),uIntensity.x);
 }
 void main () {
-    if(cos(vUv.x*5.*sin(uTime/20.)*10. -uTime) < 0.99) discard;
+    // if(sin(vUv.x*(sin(uTime*0.1)*50.0 +10.0) +uTime) < 0.99) discard;
+    if(sin(vUv.x*80. + uTime*2.) < 0.99) discard;
+
  
 
 

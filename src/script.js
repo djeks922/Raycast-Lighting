@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import dat from 'dat.gui';
+import gsap from 'gsap';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
@@ -24,9 +25,9 @@ const gui = new dat.GUI();
 // Parameters for gui
 
 const parameters = {};
-parameters.rTubes = 193;
-parameters.gTubes = 41;
-parameters.bTubes = 46;
+parameters.rTubes = 255;
+parameters.gTubes = 255;
+parameters.bTubes = 255;
 
 parameters.rPlane = 255;
 parameters.gPlane = 255;
@@ -217,7 +218,7 @@ const raycast = (objects) => {
 
   // Light
   let light = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(0.007, 20, 20),
+    new THREE.SphereBufferGeometry(0.001, 20, 20),
     new THREE.MeshBasicMaterial({ color: 0xffffff })
   );
   scene.add(light);
@@ -266,16 +267,17 @@ window.addEventListener("resize", () => {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
-camera.position.z = 3;
+gsap.fromTo(camera.position,{z:-1},{duration:10,z:1})
+// gsap.to(camera.position,{z:-1,delay:10})
 scene.add(camera);
 
 /**
  *  Controls
  */
 
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.update();
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
+// controls.update();
 /**
  * Renderer
  */
@@ -302,7 +304,7 @@ const animate = () => {
 
   let elapseTime = clock.getElapsedTime();
   // Controls update
-  controls.update();
+  // controls.update();
 
   /**
    *  cursor/light animation
@@ -334,11 +336,12 @@ const animate = () => {
   
   // camera.rotation.y += -mouse.x
   // camera.rotation.x += +mouse.y
+  // gsap.to(camera.rotation,{duration:10,x:camera.rotation.x+mouse.y,y:camera.rotation.y-mouse.x})
+  // camera.position.x = Math.cos(elapseTime * 0.3);
+  // camera.position.y = Math.sin(elapseTime *.25); 
+  // camera.position.z = Math.sin(elapseTime*0.3); 
 
-  camera.position.x = Math.cos(elapseTime * 0.3);
-  camera.position.y = Math.sin(elapseTime *.25); 
-  camera.position.z = (Math.sin(elapseTime*0.3)); 
-  // camera.lookAt(light.position)
+  
   // console.log(camera.position.x)
 
  

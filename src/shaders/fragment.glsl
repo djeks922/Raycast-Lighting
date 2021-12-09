@@ -23,7 +23,7 @@ float getScatter(vec3 cameraPos, vec3 dir, vec3 lightPos, float d) {
     return pow(max(0.0,l/uIntensity.y),uIntensity.x);
 }
 void main () {
-   if(cos(vUv.x*5.* uTime) < sin(uTime)) discard;
+//    if(cos(vUv.x*100.* uTime) < 0.99) discard;
 
     vec3 cameraToWorld = vWorldPosition - cameraPosition;
     vec3 cameraToWorldDir = normalize(cameraToWorld);
