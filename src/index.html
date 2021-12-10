@@ -1,25 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>04 - Webpack</title>
-    <!-- <style>
-        .cursor{
-            position: absolute;
-            left: 0;
-            right: 0;
-            background-color: blue;
-            width: 20px;
-            height: 20px;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-        }
-    </style> -->
-</head>
-<body>
-    <!-- <div class="cursor"></div> -->
+    <style>
+      .cursor {
+        position: absolute;
+        left: 0;
+        right: 0;
+        background-color: blue;
+        width: 20px;
+        height: 20px;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
     <canvas class="webgl"></canvas>
-</body>
+    <!-- <div class="cursor"></div> -->
+    <div style="height: 100vh;">
+      <div class="header">
+        <h1>PROJECT</h1>
+      </div>
+      <nav class="navigation">
+        <ul class="navigation__list" id="nav_list">
+          <li class="navigation__list-items">
+            <a class="magic-hover" href="#" title="Work">
+              <div class="cut__wrapper-flex">
+                <div class="cut__wrapper" id="cut__wrapper">
+                  <div class="cut cut1">Work</div>
+                  <div class="cut cut2">Work</div>
+                  <div class="cut cut3">Work</div>
+                  <div class="cut cut4">Work</div>
+                  <div style="opacity: 0; pointer-events: none;">Work</div>
+                </div>
+                <!-- after -->
+              </div>
+            </a>
+          </li>
+          <li class="navigation__list-items">
+            <a class="magic-hover" href="#" title="Culture"><div class="cut__wrapper-flex">
+              <div class="cut__wrapper" >
+                <div class="cut cut1">Culture</div>
+                <div class="cut cut2">Culture</div>
+                <div class="cut cut3">Culture</div>
+                <div class="cut cut4">Culture</div>
+                <div style="opacity: 0; pointer-events: none;">Culture</div>
+              </div>
+              <!-- after -->
+            </div></a>
+          </li>
+          <li class="navigation__list-items">
+            <a class="magic-hover" href="#" title="Careers"><div class="cut__wrapper-flex">
+              <div class="cut__wrapper" >
+                <div class="cut cut1">Careers</div>
+                <div class="cut cut2">Careers</div>
+                <div class="cut cut3">Careers</div>
+                <div class="cut cut4">Careers</div>
+                <div style="opacity: 0; pointer-events: none;">Careers</div>
+              </div>
+              <!-- after -->
+            </div></a>
+          </li>
+          <li class="navigation__list-items">
+            <a class="magic-hover" href="#" title="Contact"><div class="cut__wrapper-flex">
+              <div class="cut__wrapper" >
+                <div class="cut cut1">Contact</div>
+                <div class="cut cut2">Contact</div>
+                <div class="cut cut3">Contact</div>
+                <div class="cut cut4">Contact</div>
+                <div style="opacity: 0; pointer-events: none;">Contact</div>
+              </div>
+              <!-- after -->
+            </div></a>
+          </li>
+          <li class="navigation__list-items">
+            <a class="magic-hover" href="#" title="Archive"><div class="cut__wrapper-flex">
+              <div class="cut__wrapper" >
+                <div class="cut cut1">Archive</div>
+                <div class="cut cut2">Archive</div>
+                <div class="cut cut3">Archive</div>
+                <div class="cut cut4">Archive</div>
+                <div style="opacity: 0; pointer-events: none;">Archive</div>
+              </div>
+              <!-- after -->
+            </div></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="section1"></div>
+    <div class="section2">Djeks</div>
+    <!-- <script src="../src/js/navbar.js"> -->
+    </script>
+  </body>
 </html>

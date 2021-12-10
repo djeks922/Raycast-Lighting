@@ -267,17 +267,18 @@ window.addEventListener("resize", () => {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.0001,1000);
-gsap.fromTo(camera.position,{z:-1},{duration:10,z:1})
+// gsap.fromTo(camera.position,{z:-1},{duration:10,z:1})
 // gsap.to(camera.position,{z:-1,delay:10})
+camera.position.z = 10
 scene.add(camera);
 
 /**
  *  Controls
  */
 
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.update();
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.update();
 /**
  * Renderer
  */
@@ -340,7 +341,7 @@ const animate = () => {
   // camera.position.x = Math.cos(elapseTime * 0.3);
   // camera.position.y = Math.sin(elapseTime *.25); 
   // camera.position.z = Math.sin(elapseTime*0.3); 
-
+  // camera.lookAt(new THREE.Vector3(0,0,0))
   
   // console.log(camera.position.x)
 
@@ -351,6 +352,7 @@ const animate = () => {
   renderer.render(scene1, camera);
   renderer.clearDepth();
   renderer.render(scene,camera)
+  
 
   // recall animationFunc
 
@@ -358,3 +360,49 @@ const animate = () => {
 };
 
 animate();
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+  let container = document.getElementById("nav_list");
+  container.onmouseover = handler;
+
+  function handler(event) {
+    function str(el) {
+      if (!el) return "null";
+      return el.className || el.tagName;
+    }
+
+    if (str(event.target) == "cut__wrapper") {
+      const cut1 = event.target.children[0];
+      const cut2 = event.target.children[1];
+      const cut3 = event.target.children[2];
+      const cut4 = event.target.children[3];
+      const timeline = gsap.timeline();
+      timeline
+        .fromTo(cut3, 0.6, { top: "50%", y: "-50%" }, { y: "150%" })
+        .fromTo(cut4, 0.6, { top: "50%", y: "-50%" }, { y: "150%" }, "<+0.1")
+        .fromTo(cut1, 0.6, { y: "-150%" }, { y: "0" }, "<")
+        .fromTo(cut2, 0.6, { y: "-150%" }, { y: "0" }, "<-0.1");
+    }
+  }
+////////////////////////////////////////////////////////////
+let lastKnownScrollPosition = 0;
+let ticking = false;
+
+function doSomething(scrollPos) {
+  gsap.to(camera.position,{duration:3,z:2+scrollPos/1000})
+}
+
+document.addEventListener('scroll', function(e) {
+  lastKnownScrollPosition = window.scrollY;
+  console.log(lastKnownScrollPosition);
+
+  if (!ticking) {
+    window.requestAnimationFrame(function() {
+      doSomething(lastKnownScrollPosition);
+      ticking = false;
+    });
+
+    ticking = true;
+  }
+});
