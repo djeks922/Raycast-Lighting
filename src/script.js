@@ -379,10 +379,10 @@ animate();
       const cut4 = event.target.children[3];
       const timeline = gsap.timeline();
       timeline
-        .fromTo(cut3, 0.6, { top: "50%", y: "-50%" }, { y: "150%" })
-        .fromTo(cut4, 0.6, { top: "50%", y: "-50%" }, { y: "150%" }, "<+0.1")
-        .fromTo(cut1, 0.6, { y: "-150%" }, { y: "0" }, "<")
-        .fromTo(cut2, 0.6, { y: "-150%" }, { y: "0" }, "<-0.1");
+        .fromTo(cut3,{duration:0.6, top: "50%", y: "-50%" }, { y: "150%" })
+        .fromTo(cut4,{duration:0.6, top: "50%", y: "-50%" }, { y: "150%" }, "<+0.1")
+        .fromTo(cut1,{duration:0.6, y: "-150%" }, { y: "0" }, "<")
+        .fromTo(cut2,{duration:0.6, y: "-150%" }, { y: "0" }, "<-0.1");
     }
   }
 ////////////////////////////////////////////////////////////
